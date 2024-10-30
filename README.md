@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to the documentation for the TurtleShell project. TurtleShell provides a versatile framework for engaging with different AI language processing engines. Designed with flexibility and scalability in mind, it allows users to seamlessly switch between different AI platforms, such as Ollama and OpenAI, leveraging unique features from each engine.
+TurtleShell provides a versatile framework for engaging with different AI language processing engines. Designed with flexibility and scalability in mind, it allows users to seamlessly switch between different AI platforms, such as Ollama and OpenAI, leveraging unique features from each engine.
 
 ## Purpose
 

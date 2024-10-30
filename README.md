@@ -6,7 +6,7 @@ TurtleShell provides a versatile framework for engaging with different AI langua
 
 ## Purpose
 
-The primary purpose of TurtleShell is to offer a unified interface for running AI models from different platforms. This allows developers to integrate powerful AI functionalities into their applications with minimal setup and effort. The project is particularly useful for applications that require conversational AI capabilities, such as chatbots or virtual assistants.
+The primary purpose of TurtleShell is to offer a unified interface for running various AI models. This allows developers to integrate powerful AI functionalities into their applications with minimal setup and effort. The project is particularly useful for applications that require conversational AI capabilities, such as chatbots or virtual assistants.
 
 ## Architecture Overview
 

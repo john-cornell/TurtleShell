@@ -1,5 +1,7 @@
 # TurtleShell Documentation
 
+See ExampleTurtle https://github.com/john-cornell/TurtleShell/tree/master/ExampleTurtle for simple implementation example
+
 ## Introduction
 
 TurtleShell provides a versatile framework for engaging with different AI language processing engines. Designed with flexibility and scalability in mind, it allows users to seamlessly switch between different AI platforms, such as Ollama and OpenAI, leveraging unique features from each engine.

@@ -50,6 +50,23 @@ namespace TurtleShell.Engines.OpenAI
             return content;
         }
 
+        public override async IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
+        {
+            if (resetHistory) ResetHistory();
+            _chatHistory.AddUserMessage(prompt);
+
+            var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+            var fullResponse = new StringBuilder();
+
+            await foreach (var chunk in chatCompletionService.GetStreamingChatMessageContentsAsync(_chatHistory))
+            {
+                fullResponse.Append(chunk.Content);
+                yield return chunk.Content;
+            }
+
+            _chatHistory.AddAssistantMessage(fullResponse.ToString());
+        }
+
         protected override void OnJsonResponseProcessed(string processedResponse)
         {
             _chatHistory[^1].Content = processedResponse;

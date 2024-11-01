@@ -43,9 +43,9 @@ namespace TurtleShell.Engines.Ollama
         {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _conversationHistory = new List<Message>
-        {
-            new Message { Role = ChatRole.System, Content = systemPrompt!.Prompt }
-        };
+                {
+                    new Message { Role = ChatRole.System, Content = systemPrompt!.Prompt }
+                };
         }
 
         protected override async Task<string> ExecuteCallAsync(string prompt)
@@ -73,6 +73,28 @@ namespace TurtleShell.Engines.Ollama
         protected override void OnJsonResponseProcessed(string processedResponse)
         {
             _conversationHistory[^1].Content = processedResponse;
+        }
+
+        public override async IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
+        {
+            if (resetHistory) ResetHistory();
+            _conversationHistory.Add(new Message { Role = ChatRole.User, Content = prompt });
+
+            var request = new ChatRequest
+            {
+                Model = _ollama.SelectedModel,
+                Messages = _conversationHistory,
+                Format = _options.GetSection<JsonEngineConfigSection>()?.JsonFormat == true ? "json" : null
+            };
+
+            var fullResponse = new StringBuilder();
+            await foreach (var answerToken in _ollama.Chat(request))
+            {
+                fullResponse.Append(answerToken.Message.Content);
+                yield return answerToken.Message.Content;
+            }
+
+            _conversationHistory.Add(new Message { Role = ChatRole.Assistant, Content = fullResponse.ToString() });
         }
     }
 }

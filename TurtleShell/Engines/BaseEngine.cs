@@ -14,7 +14,7 @@ namespace TurtleShell.Engines
         public EngineModelId EngineModelId { get; protected set; }
 
         protected BaseEngine(EngineModelId engineModelId, EngineConfigOptions options)
-        {            
+        {
             EngineModelId = engineModelId;
             _options = options ?? new EngineConfigOptions();
             Initialize();
@@ -87,6 +87,8 @@ namespace TurtleShell.Engines
                 }
             }
         }
+
+        public abstract IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections);
 
         protected abstract void OnJsonResponseProcessed(string processedResponse);
     }

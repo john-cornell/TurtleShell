@@ -12,5 +12,7 @@ namespace TurtleShell
         void SetSystemPrompt(string systemPrompt);
         Task<string> CallAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections);
         EngineModelId EngineModelId { get; }
+
+        IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections);
     }
 }

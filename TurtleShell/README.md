@@ -1,13 +1,14 @@
-```markdown
 # TurtleShell Documentation
+
+See ExampleTurtle https://github.com/john-cornell/TurtleShell/tree/master/ExampleTurtle for simple implementation example
 
 ## Introduction
 
-Welcome to the documentation for the TurtleShell project. TurtleShell provides a versatile framework for engaging with different AI language processing engines. Designed with flexibility and scalability in mind, it allows users to seamlessly switch between different AI platforms, such as Ollama and OpenAI, leveraging unique features from each engine.
+TurtleShell provides a versatile framework for engaging with different AI language processing engines. Designed with flexibility and scalability in mind, it allows users to seamlessly switch between different AI platforms, such as Ollama and OpenAI, leveraging unique features from each engine.
 
 ## Purpose
 
-The primary purpose of TurtleShell is to offer a unified interface for running AI models from different platforms. This allows developers to integrate powerful AI functionalities into their applications with minimal setup and effort. The project is particularly useful for applications that require conversational AI capabilities, such as chatbots or virtual assistants.
+The primary purpose of TurtleShell is to offer a unified interface for running various AI models. This allows developers to integrate powerful AI functionalities into their applications with minimal setup and effort. The project is particularly useful for applications that require conversational AI capabilities, such as chatbots or virtual assistants.
 
 ## Architecture Overview
 
@@ -89,4 +90,3 @@ customOptions.AddSection(new JsonEngineConfigSection { ParseJson = true });
 ## Conclusion
 
 TurtleShell provides a robust solution for integrating various AI capabilities into your applications. By facilitating easy swaps between different AI engines and models, it standardizes how you can deploy conversational AI features across diverse use cases. With its straightforward design and powerful configuration options, TurtleShell will elevate the conversational experiences of your applications.
-```

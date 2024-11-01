@@ -13,7 +13,7 @@ namespace TurtleShell.Documenter.WPF.Prompts
             @"<TASK>
     <TITLE>High-Level Overview</TITLE>
     <OUTPUT_FORMAT>
-        <RULE>You MUST answer in Git Flavored Markdown, parsable by MarkdownSharp</RULE>
+        <RULE>You MUST answer in Git Flavored Markdown, parseable by MarkdownSharp</RULE>
         <RULE>You MUST answer as Application Documentation</RULE>
         
 </OUTPUT_FORMAT>

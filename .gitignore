@@ -361,6 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/AgenticRAG.Sandpit/appsettings.json
-	
+
+/TurtleShell.Documenter.WPF/appsettings.json	
 /ExampleTurtle/appsettings.json

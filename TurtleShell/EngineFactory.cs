@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TurtleShell.Config;
+using TurtleShell.Engines.AnthropicClaude;
 using TurtleShell.Engines.Ollama;
 using TurtleShell.Engines.OpenAI;
 
@@ -27,6 +28,8 @@ namespace TurtleShell
 
             switch (engineModelId.EngineType)
             {
+                case EngineType.Anthropic:
+                    return AnthropicEngine.Start(configuration, engineModelId, options);
                 case EngineType.Ollama:
                     return OllamaEngine.Start(engineModelId, options);
                 case EngineType.OpenAI:

@@ -2,6 +2,7 @@
 {
     public enum EngineType
     {
+        Anthropic,
         Ollama,
         OpenAI
     }

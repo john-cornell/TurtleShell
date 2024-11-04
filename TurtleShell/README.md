@@ -30,6 +30,20 @@ TurtleShell's architecture is centered around the `EngineFactory` class, which s
 var engineModelId = new EngineModelId(EngineType.OpenAI, OpenAIModelIds.GPT3_5_Turbo);
 IEngine engine = EngineFactory.Start(engineModelId, options: new EngineConfigOptions());
 ```
+### Configuration
+
+To add Anthropic or OpenAI API Keys, add a appconfig.json file to your entrypoint project (remember to set the **Copy Always** or **Copy if Newer** flag in properties) and add the following:
+
+``` json
+﻿{
+  "OpenAI": {
+    "ApiKey": ""
+  },
+  "Anthropic": {
+    "ApiKey": ""
+  }
+}
+```
 
 ### EngineModelId
 

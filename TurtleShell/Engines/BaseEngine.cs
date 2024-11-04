@@ -50,6 +50,7 @@ namespace TurtleShell.Engines
         protected abstract void OnSystemPromptChanged(string systemPrompt);
         protected abstract void ResetHistory();
         protected abstract Task<string> ExecuteCallAsync(string prompt);
+        protected abstract IAsyncEnumerable<string> ExecuteStreamAsync(string prompt);
 
         public async Task<string> CallAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
         {
@@ -88,8 +89,45 @@ namespace TurtleShell.Engines
             }
         }
 
-        public abstract IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections);
+        public async IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
+        {
+            var originalSystemPrompt = _options.GetSection<SystemPromptConfigSection>();
+            var tempSystemPrompt = engineConfigSections.OfType<SystemPromptConfigSection>().FirstOrDefault();
 
+            try
+            {
+                if (tempSystemPrompt != null)
+                {
+                    SetSystemPrompt(tempSystemPrompt.Prompt);
+                }
+
+                if (resetHistory)
+                {
+                    ResetHistory();
+                }
+
+                await foreach (var chunk in ExecuteStreamAsync(prompt))
+                {
+                    string processedChunk = chunk;
+
+                    var jsonConfig = _options.GetSection<JsonEngineConfigSection>();
+                    if (jsonConfig?.ParseJson == true)
+                    {
+                        processedChunk = new JsonExtractor().ExtractJSON(chunk);
+                        OnJsonResponseProcessed(processedChunk);
+                    }
+
+                    yield return processedChunk;
+                }
+            }
+            finally
+            {
+                if (tempSystemPrompt != null)
+                {
+                    SetSystemPrompt(originalSystemPrompt.Prompt);
+                }
+            }
+        }
         protected abstract void OnJsonResponseProcessed(string processedResponse);
     }
 }

@@ -40,34 +40,28 @@ namespace TurtleShell.Engines.OpenAI
             _chatHistory = new ChatHistory(systemPrompt?.Prompt ?? string.Empty);
         }
 
-        protected override async Task<string> ExecuteCallAsync(string prompt)
+        protected override async Task<string> ExecuteCallAsync(string prompt, params EngineConfigSection[] engineConfigSections)
         {
-            _chatHistory.AddUserMessage(prompt);
             var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+
             var response = await chatCompletionService.GetChatMessageContentsAsync(_chatHistory);
-            var content = response.First().Content;
-            _chatHistory.AddAssistantMessage(content);
-            return content;
+            return response.First().Content;
         }
 
-        public override async IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
+        protected override async IAsyncEnumerable<string> ExecuteStreamAsync(string prompt, params EngineConfigSection[] engineConfigSections)
         {
-            if (resetHistory) ResetHistory();
-            _chatHistory.AddUserMessage(prompt);
-
             var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
-            var fullResponse = new StringBuilder();
 
             await foreach (var chunk in chatCompletionService.GetStreamingChatMessageContentsAsync(_chatHistory))
             {
-                fullResponse.Append(chunk.Content);
                 yield return chunk.Content;
             }
-
-            _chatHistory.AddAssistantMessage(fullResponse.ToString());
         }
 
-        protected override void OnJsonResponseProcessed(string processedResponse)
+        protected override void AddAssistantMessageToHistory(string response) => _chatHistory.AddAssistantMessage(response);
+        protected override void AddUserMessageToHistory(string prompt) => _chatHistory.AddUserMessage(prompt);
+
+        protected override void OnResponseParsed(string processedResponse)
         {
             _chatHistory[^1].Content = processedResponse;
         }

@@ -48,7 +48,7 @@ namespace TurtleShell.Engines.Ollama
                 };
         }
 
-        protected override async Task<string> ExecuteCallAsync(string prompt)
+        protected override async Task<string> ExecuteCallAsync(string prompt, params EngineConfigSection[] engineConfigSections)
         {
             _conversationHistory.Add(new Message { Role = ChatRole.User, Content = prompt });
 
@@ -70,16 +70,8 @@ namespace TurtleShell.Engines.Ollama
             return response;
         }
 
-        protected override void OnJsonResponseProcessed(string processedResponse)
+        protected override async IAsyncEnumerable<string> ExecuteStreamAsync(string prompt, params EngineConfigSection[] engineConfigSections)
         {
-            _conversationHistory[^1].Content = processedResponse;
-        }
-
-        public override async IAsyncEnumerable<string> StreamAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
-        {
-            if (resetHistory) ResetHistory();
-            _conversationHistory.Add(new Message { Role = ChatRole.User, Content = prompt });
-
             var request = new ChatRequest
             {
                 Model = _ollama.SelectedModel,
@@ -93,8 +85,15 @@ namespace TurtleShell.Engines.Ollama
                 fullResponse.Append(answerToken.Message.Content);
                 yield return answerToken.Message.Content;
             }
-
-            _conversationHistory.Add(new Message { Role = ChatRole.Assistant, Content = fullResponse.ToString() });
         }
+
+        protected override void AddUserMessageToHistory(string prompt) =>
+            _conversationHistory.Add(new Message { Role = ChatRole.User, Content = prompt });
+
+        protected override void AddAssistantMessageToHistory(string response) => 
+            _conversationHistory.Add(new Message { Role = ChatRole.Assistant, Content = response });
+        
+        protected override void OnResponseParsed(string processedResponse) =>
+            _conversationHistory[^1].Content = processedResponse;
     }
 }

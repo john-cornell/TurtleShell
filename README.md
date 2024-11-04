@@ -43,7 +43,8 @@ To add Anthropic or OpenAI API Keys, add a appconfig.json (remember to set the *
   "Anthropic": {
     "ApiKey": ""
   }
-}```
+}
+```
 
 ### EngineModelId
 

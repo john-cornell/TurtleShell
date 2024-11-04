@@ -33,7 +33,7 @@ IEngine engine = EngineFactory.Start(engineModelId, options: new EngineConfigOpt
 
 ### Configuration
 
-To add Anthropic or OpenAI API Keys, add a appconfig.json (remember to set the **Copy Always** or **Copy if Newer** flag in properties) and add the following:
+To add Anthropic or OpenAI API Keys, add a appconfig.json file to your entrypoint project (remember to set the **Copy Always** or **Copy if Newer** flag in properties) and add the following:
 
 ``` json
 ﻿{

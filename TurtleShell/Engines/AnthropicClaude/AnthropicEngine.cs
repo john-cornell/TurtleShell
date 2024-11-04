@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TurtleShell.Config;
+using TurtleShell.Engines.Ollama;
 using Message = Anthropic.SDK.Messaging.Message;
 
 namespace TurtleShell.Engines.AnthropicClaude
@@ -24,24 +25,30 @@ namespace TurtleShell.Engines.AnthropicClaude
             string? apiKey = configuration["Anthropic:ApiKey"];
             _client = new AnthropicClient(new APIAuthentication(apiKey));
 
-           
             ResetHistory();
         }
 
-        protected override async IAsyncEnumerable<string> ExecuteStreamAsync(string prompt)
+        public static AnthropicEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null)
         {
-            throw new NotImplementedException();
+            return new AnthropicEngine(configuration, engineModelId, options);
         }
 
-        protected override async Task<string> ExecuteCallAsync(string prompt)
-        {
-            Message message = new Message(RoleType.User, prompt);
+        protected override void AddUserMessageToHistory(string prompt) => _messages.Add(new Message(RoleType.User, prompt));
 
+        protected override void AddAssistantMessageToHistory(string response) => _messages.Add(new Message(RoleType.Assistant, response));
+
+        protected override void OnResponseParsed(string processedResponse)
+        {
+            _messages[^1] = new Message(RoleType.Assistant, processedResponse);
+        }
+
+        protected override async Task<string> ExecuteCallAsync(string prompt, params EngineConfigSection[] engineConfigSections)
+        {
             var parameters = new MessageParameters()
             {
                 Messages = _messages,
-                //MaxTokens = 1024,
-                Model = AnthropicModels.Claude35Sonnet,
+                System = new List<SystemMessage> { _systemMessage },
+                Model = EngineModelId.ModelId,
                 Stream = false,
                 Temperature = 1.0m,
             };
@@ -51,18 +58,33 @@ namespace TurtleShell.Engines.AnthropicClaude
             return response.Message;
         }
 
-        protected override void OnJsonResponseProcessed(string processedResponse)
+        protected override async IAsyncEnumerable<string> ExecuteStreamAsync(string prompt, params EngineConfigSection[] engineConfigSections)
         {
-            throw new NotImplementedException();
+            var parameters = new MessageParameters()
+            {
+                Messages = _messages,
+                System = new List<SystemMessage> { _systemMessage },
+                Model = EngineModelId.ModelId,
+                Stream = true,
+                Temperature = 1.0m,
+            };
+            var outputs = new List<MessageResponse>();
+            await foreach (var response in _client.Messages.StreamClaudeMessageAsync(parameters))
+            {
+                if (response.Delta != null)
+                {
+                    yield return response.Delta.Text;
+                }
+            }
         }
 
         protected override void OnSystemPromptChanged(string systemPrompt)
         {
-            throw new NotImplementedException();
+            _systemMessage = new SystemMessage(systemPrompt);
         }
 
         protected override void ResetHistory()
-        {            
+        {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _systemMessage = new SystemMessage(systemPrompt.Prompt);
 
@@ -70,5 +92,5 @@ namespace TurtleShell.Engines.AnthropicClaude
         }
     }
 
-    
+
 }

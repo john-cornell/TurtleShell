@@ -41,21 +41,30 @@ namespace TurtleShell.Engines
             }
         }
 
-        public virtual void SetSystemPrompt(string systemPrompt)
+        public void SetSystemPrompt(string systemPrompt)
+        {
+            CustomSetSystemPrompt(systemPrompt);
+            OnSystemPromptChanged(systemPrompt);
+        }
+
+        public virtual void CustomSetSystemPrompt(string systemPrompt)
         {
             _options[EngineConfigSections.SystemPrompt] = new SystemPromptConfigSection { Prompt = systemPrompt };
-            OnSystemPromptChanged(systemPrompt);
         }
 
         protected abstract void OnSystemPromptChanged(string systemPrompt);
         protected abstract void ResetHistory();
-        protected abstract Task<string> ExecuteCallAsync(string prompt);
-        protected abstract IAsyncEnumerable<string> ExecuteStreamAsync(string prompt);
+        protected abstract Task<string> ExecuteCallAsync(string prompt, params EngineConfigSection[] engineConfigSections);
+        protected abstract IAsyncEnumerable<string> ExecuteStreamAsync(string prompt, params EngineConfigSection[] engineConfigSections);
 
         public async Task<string> CallAsync(string prompt, bool resetHistory = false, params EngineConfigSection[] engineConfigSections)
         {
             var originalSystemPrompt = _options.GetSection<SystemPromptConfigSection>();
             var tempSystemPrompt = engineConfigSections.OfType<SystemPromptConfigSection>().FirstOrDefault();
+
+            var jsonFormatOption =
+                engineConfigSections.OfType<JsonEngineConfigSection>().FirstOrDefault()
+                ?? _options.GetSection<JsonEngineConfigSection>();
 
             try
             {
@@ -69,13 +78,16 @@ namespace TurtleShell.Engines
                     ResetHistory();
                 }
 
-                var response = await ExecuteCallAsync(prompt);
+                AddUserMessageToHistory(prompt);
 
-                var jsonConfig = _options.GetSection<JsonEngineConfigSection>();
-                if (jsonConfig?.ParseJson == true)
+                var response = await ExecuteCallAsync(prompt, engineConfigSections);
+
+                AddAssistantMessageToHistory(response);
+
+                if (jsonFormatOption?.ParseJson == true)
                 {
                     response = new JsonExtractor().ExtractJSON(response);
-                    OnJsonResponseProcessed(response);
+                    OnResponseParsed(response);
                 }
 
                 return response;
@@ -93,6 +105,11 @@ namespace TurtleShell.Engines
         {
             var originalSystemPrompt = _options.GetSection<SystemPromptConfigSection>();
             var tempSystemPrompt = engineConfigSections.OfType<SystemPromptConfigSection>().FirstOrDefault();
+            var jsonFormatOption =
+                engineConfigSections.OfType<JsonEngineConfigSection>().FirstOrDefault()
+                ?? _options.GetSection<JsonEngineConfigSection>();
+
+            StringBuilder complete = new StringBuilder();
 
             try
             {
@@ -106,19 +123,21 @@ namespace TurtleShell.Engines
                     ResetHistory();
                 }
 
-                await foreach (var chunk in ExecuteStreamAsync(prompt))
+                await foreach (var chunk in ExecuteStreamAsync(prompt, engineConfigSections))
                 {
-                    string processedChunk = chunk;
-
-                    var jsonConfig = _options.GetSection<JsonEngineConfigSection>();
-                    if (jsonConfig?.ParseJson == true)
-                    {
-                        processedChunk = new JsonExtractor().ExtractJSON(chunk);
-                        OnJsonResponseProcessed(processedChunk);
-                    }
-
-                    yield return processedChunk;
+                    complete.Append(chunk);
+                    yield return chunk;
                 }
+
+                string assistantResponse = complete.ToString();
+
+                if (jsonFormatOption?.ParseJson == true)
+                {
+                    assistantResponse = new JsonExtractor().ExtractJSON(assistantResponse);
+                    OnResponseParsed(assistantResponse);
+                }
+
+                AddAssistantMessageToHistory(complete.ToString());
             }
             finally
             {
@@ -128,6 +147,10 @@ namespace TurtleShell.Engines
                 }
             }
         }
-        protected abstract void OnJsonResponseProcessed(string processedResponse);
+
+        protected abstract void AddUserMessageToHistory(string prompt);
+        protected abstract void AddAssistantMessageToHistory(string response);
+
+        protected abstract void OnResponseParsed(string processedResponse);
     }
 }

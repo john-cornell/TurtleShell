@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using TurtleShell;
 using TurtleShell.Config;
+using TurtleShell.Engines.Anthropic;
 using TurtleShell.Engines.Ollama;
 using TurtleShell.Engines.OpenAI;
 using static OllamaSharp.OllamaApiClient;
@@ -16,11 +17,14 @@ options.GetSection<JsonEngineConfigSection>()!.JsonFormat = false;
 //options[EngineConfigSections.Json] = JsonEngineConfigSection.UseJsonFormat;
 
 //var engineModelId = new EngineModelId(EngineType.OpenAI, OpenAIModelIds.GPT4o);
-var engineModelId = new EngineModelId(EngineType.Ollama, OllamaModelIds.Phi3);
+//var engineModelId = new EngineModelId(EngineType.Ollama, OllamaModelIds.Phi3);
+var engineModelId = new EngineModelId(EngineType.Anthropic, AnthropicModelIds.Claude3_Haiku_20240307);
+
 //options is optional
 
 //Will initialize IConfiguration from appsettings.json, but IConfiguration can be passed directly as a named parameter
 IEngine engine = EngineFactory.Start(engineModelId, options);
+engine.SetSystemPrompt("Be sure to ALWAYS WRITE IN CAPS");
 
 var response = await engine.CallAsync("What is the capital of France?");
 Console.WriteLine(response);

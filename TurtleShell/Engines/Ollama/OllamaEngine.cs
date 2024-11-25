@@ -50,8 +50,6 @@ namespace TurtleShell.Engines.Ollama
 
         protected override async Task<string> ExecuteCallAsync(string prompt, params EngineConfigSection[] engineConfigSections)
         {
-            _conversationHistory.Add(new Message { Role = ChatRole.User, Content = prompt });
-
             var request = new ChatRequest
             {
                 Model = _ollama.SelectedModel,
@@ -66,7 +64,7 @@ namespace TurtleShell.Engines.Ollama
             }
 
             var response = builder.ToString();
-            _conversationHistory.Add(new Message { Role = ChatRole.Assistant, Content = response });
+            
             return response;
         }
 

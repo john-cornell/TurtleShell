@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TurtleShell.Config;
 using TurtleShell.Engines.AnthropicClaude;
+using TurtleShell.Engines.AzureOpenAI;
 using TurtleShell.Engines.Ollama;
 using TurtleShell.Engines.OpenAI;
 
@@ -34,6 +35,8 @@ namespace TurtleShell
                     return OllamaEngine.Start(engineModelId, options);
                 case EngineType.OpenAI:
                     return OpenAIGPTEngine.Start(configuration, engineModelId, options);
+                case EngineType.AzureOpenAI:
+                    return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options);
                 default:
                     throw new ArgumentException("Invalid engine type");
             }

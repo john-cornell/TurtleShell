@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<PackageId>TurtleShell</PackageId>
-		<Version>1.0.5</Version>
+		<Version>1.0.6</Version>
 		<Authors>John Cornell</Authors>
 		<Description>Yet another LLM wrapper, plan to make it work on all major LLMs and Ollama. Feel free to use, but largely a personal project</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

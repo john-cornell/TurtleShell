@@ -83,7 +83,7 @@ namespace TurtleShell.Engines.AnthropicClaude
             _systemMessage = new SystemMessage(systemPrompt);
         }
 
-        protected override void ResetHistory()
+        public override void ResetHistory()
         {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _systemMessage = new SystemMessage(systemPrompt.Prompt);

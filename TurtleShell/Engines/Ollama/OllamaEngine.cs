@@ -39,7 +39,7 @@ namespace TurtleShell.Engines.Ollama
             _conversationHistory[0] = new Message { Role = ChatRole.System, Content = systemPrompt };
         }
 
-        protected override void ResetHistory()
+        public override void ResetHistory()
         {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _conversationHistory = new List<Message>

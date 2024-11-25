@@ -61,7 +61,7 @@ namespace TurtleShell.Engines.AzureOpenAI
             ResetHistory();
         }
 
-        protected override void ResetHistory()
+        public override void ResetHistory()
         {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _chatHistory = new ChatHistory(systemPrompt?.Prompt ?? string.Empty);

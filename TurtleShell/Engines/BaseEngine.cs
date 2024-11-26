@@ -53,7 +53,7 @@ namespace TurtleShell.Engines
         }
 
         protected abstract void OnSystemPromptChanged(string systemPrompt);
-        protected abstract void ResetHistory();
+        public abstract void ResetHistory();
         protected abstract Task<string> ExecuteCallAsync(string prompt, params EngineConfigSection[] engineConfigSections);
         protected abstract IAsyncEnumerable<string> ExecuteStreamAsync(string prompt, params EngineConfigSection[] engineConfigSections);
 
@@ -122,7 +122,7 @@ namespace TurtleShell.Engines
                 {
                     ResetHistory();
                 }
-
+                AddUserMessageToHistory(prompt);
                 await foreach (var chunk in ExecuteStreamAsync(prompt, engineConfigSections))
                 {
                     complete.Append(chunk);

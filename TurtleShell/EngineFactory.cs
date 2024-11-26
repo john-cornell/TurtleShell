@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TurtleShell.Config;
 using TurtleShell.Engines.AnthropicClaude;
 using TurtleShell.Engines.GoogleGemini;
+using TurtleShell.Engines.AzureOpenAI;
 using TurtleShell.Engines.Ollama;
 using TurtleShell.Engines.OpenAI;
 
@@ -37,6 +38,8 @@ namespace TurtleShell
                     return OpenAIGPTEngine.Start(configuration, engineModelId, options);
                 case EngineType.GoogleGemini:
                     return GoogleGeminiAIEngine.Start(configuration, engineModelId, options);
+                case EngineType.AzureOpenAI:
+                    return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options);
                 default:
                     throw new ArgumentException("Invalid engine type");
             }

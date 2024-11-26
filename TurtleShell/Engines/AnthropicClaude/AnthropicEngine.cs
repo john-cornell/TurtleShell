@@ -51,11 +51,22 @@ namespace TurtleShell.Engines.AnthropicClaude
                 Model = EngineModelId.ModelId,
                 Stream = false,
                 Temperature = 1.0m,
+                //TODO: Implement GetMaxTokens as an EngineConfigSection
+                MaxTokens = GetMaxTokens(EngineModelId.ModelId)
             };
 
             var response = await _client.Messages.GetClaudeMessageAsync(parameters);
 
             return response.Message;
+        }
+
+        private int GetMaxTokens(string modelId)
+        {
+            if (modelId.StartsWith("claude-3-5"))
+                return 8192;
+            else
+                return 4096;
+
         }
 
         protected override async IAsyncEnumerable<string> ExecuteStreamAsync(string prompt, params EngineConfigSection[] engineConfigSections)
@@ -67,6 +78,7 @@ namespace TurtleShell.Engines.AnthropicClaude
                 Model = EngineModelId.ModelId,
                 Stream = true,
                 Temperature = 1.0m,
+                MaxTokens = 4096
             };
             var outputs = new List<MessageResponse>();
             await foreach (var response in _client.Messages.StreamClaudeMessageAsync(parameters))
@@ -83,7 +95,7 @@ namespace TurtleShell.Engines.AnthropicClaude
             _systemMessage = new SystemMessage(systemPrompt);
         }
 
-        protected override void ResetHistory()
+        public override void ResetHistory()
         {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _systemMessage = new SystemMessage(systemPrompt.Prompt);

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<PackageId>TurtleShell</PackageId>
-		<Version>1.0.1</Version>
+		<Version>1.0.6</Version>
 		<Authors>John Cornell</Authors>
 		<Description>Yet another LLM wrapper, plan to make it work on all major LLMs and Ollama. Feel free to use, but largely a personal project</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="README.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -24,6 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Anthropic.SDK" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.25.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

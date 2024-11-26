@@ -1,32 +1,59 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.SemanticKernel.ChatCompletion;
+﻿using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using TurtleShell.Config;
+using TurtleShell.Config.Settings;
 
-namespace TurtleShell.Engines.OpenAI
+
+namespace TurtleShell.Engines.AzureOpenAI
 {
-    public class OpenAIGPTEngine : BaseEngine
+    internal class AzureOpenAIGPTEngine : BaseEngine
     {
         private readonly Kernel _kernel;
         private ChatHistory _chatHistory;
 
-        private OpenAIGPTEngine(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options)
+        private AzureOpenAIGPTEngine(IConfiguration configuration, EngineModelId engineModelId,
+            EngineConfigOptions options)
             : base(engineModelId, options)
         {
-            string? apiKey = configuration["OpenAI:ApiKey"];
-            _kernel = Kernel.CreateBuilder()
-                .AddOpenAIChatCompletion(engineModelId.ModelId, apiKey ?? "")
-                .Build();
+            // Get AppSettings section
+            var appSettings = configuration.GetSection("AzureOpenAI").Get<AzureGptSettings>();
+
+            if (appSettings == null)
+            {
+                throw new Exception("AppSettings section is missing from the configuration file.");
+            }
+
+            string endpoint = appSettings.Endpoint;
+
+            string apiKey = appSettings.ApiKey;
+            string apiVersion = appSettings.ApiVersion;
+
+            if (appSettings.SpecifyApiVersion && !string.IsNullOrWhiteSpace(appSettings.ApiVersion))
+            {
+
+                _kernel = Kernel.CreateBuilder()
+                    .AddAzureOpenAIChatCompletion(
+                        engineModelId.ModelId, endpoint, apiKey, apiVersion: apiVersion)
+                    .Build();
+            }
+            else
+            {
+                _kernel = Kernel.CreateBuilder()
+                    .AddAzureOpenAIChatCompletion(
+                        engineModelId.ModelId, endpoint, apiKey)
+                    .Build();
+            }
         }
 
-        public static OpenAIGPTEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null)
+        public static AzureOpenAIGPTEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null)
         {
-            return new OpenAIGPTEngine(configuration, engineModelId, options);
+            return new AzureOpenAIGPTEngine(configuration, engineModelId, options);
         }
 
         protected override void OnSystemPromptChanged(string systemPrompt)

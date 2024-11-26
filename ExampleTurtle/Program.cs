@@ -1,6 +1,8 @@
 ﻿using TurtleShell;
 using TurtleShell.Config;
 using TurtleShell.Engines.GoogleGemini;
+using TurtleShell.Engines.AnthropicClaude;
+using TurtleShell.Engines.AzureOpenAI;
 using TurtleShell.Engines.OpenAI;
 
 int ITERATIONS = 10;
@@ -19,16 +21,16 @@ options.GetSection<JsonEngineConfigSection>()!.JsonFormat = false;
 //var engineModelId = new EngineModelId(EngineType.Ollama, OllamaModelIds.Phi3);
 //var engineModelId = new EngineModelId(EngineType.Anthropic, AnthropicModelIds.Claude3_Haiku_20240307);
 var engineModelId = new EngineModelId(EngineType.GoogleGemini, GoogleGeminiModelIds.Flash1_5_8B);
-
 //options is optional
 
 //Will initialize IConfiguration from appsettings.json, but IConfiguration can be passed directly as a named parameter
 IEngine engine = EngineFactory.Start(engineModelId, options);
-//engine.SetSystemPrompt("Drill down deeply, be very verbose, ALWAYS extrapolate as deeply as you can, don't be scared of creativity");
+engine.SetSystemPrompt("Be sure to ALWAYS WRITE IN lyrical prose");
 //engine.SetSystemPrompt("Be precise, creative and technically correct. Do not be obvious but ensure to write compilable code. ALWAYS Scratchpad first to consider what to do, then ALWAYS reflect on that before coding");
-//var response = await engine.CallAsync("What is the capital of France?");
+Console.WriteLine("LLM TEST");
 //Console.WriteLine(response);
 
+Console.WriteLine("STREAM TEST");
 //StreamAsync example
 await foreach (var streamresponse in engine.StreamAsync("Write a highly detailed and verbose essay on belly button fluff"))
 {

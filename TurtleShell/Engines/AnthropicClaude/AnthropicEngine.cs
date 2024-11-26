@@ -78,7 +78,7 @@ namespace TurtleShell.Engines.AnthropicClaude
                 Model = EngineModelId.ModelId,
                 Stream = true,
                 Temperature = 1.0m,
-                MaxTokens = 4096
+                MaxTokens = GetMaxTokens(EngineModelId.ModelId)
             };
             var outputs = new List<MessageResponse>();
             await foreach (var response in _client.Messages.StreamClaudeMessageAsync(parameters))

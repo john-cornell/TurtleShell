@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Azure.Core.GeoJson;
 using Microsoft.Extensions.Configuration;
 using TurtleShell.Config;
 
@@ -60,7 +61,7 @@ namespace TurtleShell.Engines.GoogleGemini
             }
         }
 
-        protected override void ResetHistory()
+        public override void ResetHistory()
         {
             var systemPrompt = _options.GetSection<SystemPromptConfigSection>();
             _chatHistory = new List<ChatMessage>
@@ -138,15 +139,29 @@ namespace TurtleShell.Engines.GoogleGemini
             while (!streamReader.EndOfStream)
             {
                 var line = await streamReader.ReadLineAsync();
-
-                // Filter for lines containing "text"
-                if (line != null && line.Contains("\"text\""))
+                if (string.IsNullOrWhiteSpace(line))
                 {
-                    var textStartIndex = line.IndexOf("\"text\":") + 8;
-                    var textEndIndex = line.IndexOf("\"", textStartIndex);
-                    var text = line.Substring(textStartIndex, textEndIndex - textStartIndex);
+                    continue;
+                }
+                if (line.StartsWith("data:"))
+                {
+                    line = line.Substring(5);
+                }
 
-                    yield return text;
+                var parsedResponse = JsonSerializer.Deserialize<GeminiResponse>(line);
+
+                if (parsedResponse?.Candidates != null)
+                {
+                    foreach (var candidate in parsedResponse.Candidates)
+                    {
+                        if (candidate.Content?.Parts != null)
+                        {
+                            foreach (var part in candidate.Content.Parts)
+                            {
+                                yield return part.Text;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -189,30 +204,6 @@ namespace TurtleShell.Engines.GoogleGemini
 
         private class ChatPart
         {
-            public string Text { get; set; }
-        }
-
-        private class GeminiResponse
-        {
-            [JsonPropertyName("candidates")]
-            public List<Candidate> Candidates { get; set; }
-        }
-
-        private class Candidate
-        {
-            [JsonPropertyName("content")]
-            public Content Content { get; set; }
-        }
-
-        private class Content
-        {
-            [JsonPropertyName("parts")]
-            public List<Part> Parts { get; set; }
-        }
-
-        private class Part
-        {
-            [JsonPropertyName("text")]
             public string Text { get; set; }
         }
     }

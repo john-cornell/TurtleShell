@@ -4,6 +4,7 @@
     {
         Anthropic,
         AzureOpenAI,
+        GoogleGemini,
         Ollama,
         OpenAI
     }

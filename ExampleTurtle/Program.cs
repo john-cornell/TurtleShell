@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using TurtleShell;
+﻿using TurtleShell;
 using TurtleShell.Config;
+using TurtleShell.Engines.GoogleGemini;
 using TurtleShell.Engines.AnthropicClaude;
 using TurtleShell.Engines.AzureOpenAI;
-using TurtleShell.Engines.Ollama;
 using TurtleShell.Engines.OpenAI;
-using static OllamaSharp.OllamaApiClient;
+
+int ITERATIONS = 10;
 
 EngineConfigOptions options = new EngineConfigOptions();
 
@@ -15,23 +15,23 @@ EngineConfigOptions options = new EngineConfigOptions();
 options.GetSection<JsonEngineConfigSection>()!.ParseJson = false;
 options.GetSection<JsonEngineConfigSection>()!.JsonFormat = false;
 
+//options is optional
 //options[EngineConfigSections.Json] = JsonEngineConfigSection.UseJsonFormat;
 
-//var engineModelId = new EngineModelId(EngineType.OpenAI, OpenAIModelIds.GPT4o);
-//var engineModelId = new EngineModelId(EngineType.Ollama, OllamaModelIds.Phi3);
-var engineModelId = new EngineModelId(EngineType.Anthropic, AnthropicModelIds.Claude3_5_Sonnet_Latest);
-//var engineModelId = new EngineModelId(EngineType.AzureOpenAI, AzureOpenAIModelIds.GPT4o);
-//options is optional
+var engineModelId = new EngineModelId(EngineType.GoogleGemini, GoogleGeminiModelIds.Flash1_5_8B);
 
 //Will initialize IConfiguration from appsettings.json, but IConfiguration can be passed directly as a named parameter
 IEngine engine = EngineFactory.Start(engineModelId, options);
 engine.SetSystemPrompt("Be sure to ALWAYS WRITE IN lyrical prose");
 
-Console.WriteLine("LLM TEST");
-var response = await engine.CallAsync("What is the capital of France?");
-Console.WriteLine(response);
+//Console.WriteLine("ENTER FOR LLM TEST");
+//Console.ReadLine();
+//var response = await engine.CallAsync("Talk about an obscure European town or village");
 
-Console.WriteLine("STREAM TEST");
+//Console.WriteLine(response);
+
+Console.WriteLine("ENTER FOR STREAM TEST");
+Console.ReadLine();
 //StreamAsync example
 await foreach (var streamresponse in engine.StreamAsync("Write a highly detailed and verbose essay on belly button fluff"))
 {

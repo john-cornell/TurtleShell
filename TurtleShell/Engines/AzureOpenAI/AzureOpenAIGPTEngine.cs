@@ -18,7 +18,7 @@ namespace TurtleShell.Engines.AzureOpenAI
         private ChatHistory _chatHistory;
 
         private AzureOpenAIGPTEngine(IConfiguration configuration, EngineModelId engineModelId,
-            EngineConfigOptions options, string configurationSectionName= "AzureOpenAI")
+            EngineConfigOptions options, string configurationSectionName)
             : base(engineModelId, options)
         {
             // Get AppSettings section
@@ -51,9 +51,9 @@ namespace TurtleShell.Engines.AzureOpenAI
             }
         }
 
-        public static AzureOpenAIGPTEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null)
+        public static AzureOpenAIGPTEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null, string configurationSectionName = "AzureOpenAI")
         {
-            return new AzureOpenAIGPTEngine(configuration, engineModelId, options);
+            return new AzureOpenAIGPTEngine(configuration, engineModelId, options, configurationSectionName);
         }
 
         protected override void OnSystemPromptChanged(string systemPrompt)

@@ -15,7 +15,16 @@ namespace TurtleShell
 {
     public class EngineFactory
     { 
-        public static IEngine Start(EngineModelId engineModelId, EngineConfigOptions? options = null, IConfiguration? configuration = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="engineModelId"></param>
+        /// <param name="options"></param>
+        /// <param name="configuration"></param>
+        /// <param name="customConfigurationSectionName">Custom section name in configuration file, currently only implemented in Azure</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static IEngine Start(EngineModelId engineModelId, EngineConfigOptions? options = null, IConfiguration? configuration = null, string customConfigurationSectionName = null)
         {
             if (configuration == null)
             {
@@ -39,7 +48,7 @@ namespace TurtleShell
                 case EngineType.GoogleGemini:
                     return GoogleGeminiAIEngine.Start(configuration, engineModelId, options);
                 case EngineType.AzureOpenAI:
-                    return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options);
+                    return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options, customConfigurationSectionName);
                 default:
                     throw new ArgumentException("Invalid engine type");
             }

@@ -49,6 +49,8 @@ namespace TurtleShell
                     return GoogleGeminiAIEngine.Start(configuration, engineModelId, options);
                 case EngineType.AzureOpenAI:
                     return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options, customConfigurationSectionName ?? "AzureOpenAI");
+                case EngineType.AzureRESTOpenAI:
+                    return AzureRESTOpenAIGPTEngine.Start(configuration, engineModelId, options, customConfigurationSectionName ?? "AzureOpenAI");
                 default:
                     throw new ArgumentException("Invalid engine type");
             }

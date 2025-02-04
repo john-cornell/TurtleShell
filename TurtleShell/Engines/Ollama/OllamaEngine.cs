@@ -58,7 +58,7 @@ namespace TurtleShell.Engines.Ollama
             };
 
             StringBuilder builder = new StringBuilder();
-            await foreach (var answerToken in _ollama.Chat(request))
+            await foreach (var answerToken in _ollama.ChatAsync(request))
             {
                 builder.Append(answerToken.Message.Content);
             }
@@ -78,7 +78,7 @@ namespace TurtleShell.Engines.Ollama
             };
 
             var fullResponse = new StringBuilder();
-            await foreach (var answerToken in _ollama.Chat(request))
+            await foreach (var answerToken in _ollama.ChatAsync(request))
             {
                 fullResponse.Append(answerToken.Message.Content);
                 yield return answerToken.Message.Content;

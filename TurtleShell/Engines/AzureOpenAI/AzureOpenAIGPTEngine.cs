@@ -18,11 +18,11 @@ namespace TurtleShell.Engines.AzureOpenAI
         private ChatHistory _chatHistory;
 
         private AzureOpenAIGPTEngine(IConfiguration configuration, EngineModelId engineModelId,
-            EngineConfigOptions options)
+            EngineConfigOptions options, string configurationSectionName= "AzureOpenAI")
             : base(engineModelId, options)
         {
             // Get AppSettings section
-            var appSettings = configuration.GetSection("AzureOpenAI").Get<AzureGptSettings>();
+            var appSettings = configuration.GetSection(configurationSectionName).Get<AzureGptSettings>();
 
             if (appSettings == null)
             {

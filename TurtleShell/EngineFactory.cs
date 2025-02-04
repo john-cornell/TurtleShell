@@ -14,7 +14,7 @@ using TurtleShell.Engines.OpenAI;
 namespace TurtleShell
 {
     public class EngineFactory
-    { 
+    {
         /// <summary>
         /// 
         /// </summary>
@@ -48,7 +48,7 @@ namespace TurtleShell
                 case EngineType.GoogleGemini:
                     return GoogleGeminiAIEngine.Start(configuration, engineModelId, options);
                 case EngineType.AzureOpenAI:
-                    return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options, customConfigurationSectionName);
+                    return AzureOpenAIGPTEngine.Start(configuration, engineModelId, options, customConfigurationSectionName ?? "AzureOpenAI");
                 default:
                     throw new ArgumentException("Invalid engine type");
             }

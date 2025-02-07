@@ -18,10 +18,10 @@ namespace TurtleShell.Engines.GoogleGemini
         private readonly HttpClient _httpClient;
         private  List<ChatMessage> _chatHistory;
 
-        private GoogleGeminiAIEngine(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options)
+        private GoogleGeminiAIEngine(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options, string configurationSectionName)
             : base(engineModelId, options)
         {
-            _apiKey = configuration["Google:Gemini:ApiKey"];
+            _apiKey = configuration[configurationSectionName];
             if (string.IsNullOrEmpty(_apiKey))
             {
                 throw new ArgumentException("Google API Key is missing in the configuration.");
@@ -35,9 +35,9 @@ namespace TurtleShell.Engines.GoogleGemini
             _chatHistory = new List<ChatMessage>();
         }
 
-        public static GoogleGeminiAIEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null)
+        public static GoogleGeminiAIEngine Start(IConfiguration configuration, EngineModelId engineModelId, EngineConfigOptions options = null, string configurationSection = "Google:Gemini:ApiKey")
         {
-            return new GoogleGeminiAIEngine(configuration, engineModelId, options);
+            return new GoogleGeminiAIEngine(configuration, engineModelId, options, configurationSection);
         }
 
         
